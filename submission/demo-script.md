@@ -12,14 +12,13 @@ Have tabs open: GitHub legacy repo, Forge FleetOS project, this repo's PR list, 
 3. **Executing work orders (1:10–1:50).** Show the PR list: nine PRs, eight tagged `[WO-xxx]`. Open PR #7 (WO-023)
    and show the evidence. Back in Forge, show WO-023 in review with the evidence comment, commit SHA and PR link.
    Mention that the Forge commit hook blocks a `[WO-]` commit until the checklist is done.
-4. **It works (1:50–2:30).** Terminal: `docker compose up`, the whole stack in one command. App: log in and show the
-   dashboard counts, the Tractors page with NFL-101 in the "Days Remaining" inspection alert, and
-   Employees → Payouts for last month in EUR, then HUF (a live rate from the Hungarian National Bank SOAP service).
-   Avoid USD: the legacy payouts page renders nothing for it.
-   Then prove CSRF:
-   ```
-   curl -b cookies -d "..." localhost:8081/transport/job/add   # -> 403 without token
-   ```
+4. **It works (1:50–2:30).** Terminal: `docker compose up`, the whole stack in one command. Log in on the new
+   login page. The Command Center opens and the **fleet replay starts playing**: trucks move across Europe along
+   their routes, and the timeline playhead moves with them. Drag the scrubber. Click a driver chip to follow one truck.
+   Click a timeline bar to open the job drawer, then add a cost; it saves through the CSRF-protected form.
+   Press ⌘K, type "volvo" and open the truck due for inspection in 9 days.
+   Payroll: August in EUR, then HUF (a live rate from the Hungarian National Bank), then click a driver for the work calendar.
+   Optional: show `/classic` for the before-and-after.
 5. **What Forge-driven testing found (2:30–3:00).** Open `payroll-golden-master.csv`. The legacy code bills 35 days
    into a 31-day month when a trip crosses the month boundary. "We pinned it instead of silently changing payroll,
    and raised it in Forge as a business decision. That is the difference between modernizing and rewriting."

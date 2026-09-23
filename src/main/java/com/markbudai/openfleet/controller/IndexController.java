@@ -17,7 +17,19 @@ public class IndexController {
 
     private static Logger logger = LoggerFactory.getLogger(IndexController.class);
 
+    /**
+     * The FleetOS Command Center (static single-page UI under /app) is the default landing page.
+     * @return a redirect to the Command Center.
+     */
     @RequestMapping("/")
+    public String commandCenter() {
+        return "redirect:/app/index.html";
+    }
+
+    /**
+     * The legacy server-rendered dashboard, kept available as the "Classic" view.
+     */
+    @RequestMapping("/classic")
     public String index(Model model, Principal principal) {
         model.addAttribute("path","/");
         model.addAttribute("title","Dashboard");

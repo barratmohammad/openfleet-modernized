@@ -24,6 +24,10 @@ public class IndexControllerTest {
         mockedPrincipal = Mockito.mock(Principal.class);
     }
     @Test
+    public void rootRedirectsToCommandCenter(){
+        Assert.assertEquals("redirect:/app/index.html",controller.commandCenter());
+    }
+    @Test
     public void IndexServesIndexPage(){
         Assert.assertEquals("index",controller.index(mockedModel,mockedPrincipal));
     }

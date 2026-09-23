@@ -63,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
         // must carry the session's CSRF token, which Thymeleaf th:action forms emit automatically.
         http
                 .authorizeRequests()
-                    .antMatchers("/css/**","/js/**","/fonts/**","/img/**","/bower_components/**").permitAll()
+                    .antMatchers("/css/**","/js/**","/fonts/**","/img/**","/bower_components/**","/transport.png","/favicon.ico").permitAll()
                     .anyRequest().fullyAuthenticated()
                     .and()
                 .formLogin()

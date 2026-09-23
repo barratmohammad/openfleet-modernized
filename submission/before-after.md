@@ -35,17 +35,32 @@ evidence posted back to Forge, and dev activity reported through Forge MCP.
 | WO-005 | JUnit Jupiter 5.10 + mockito-core 4.11, Surefire 3.2.5 | Mockito no longer shipped in the production jar |
 | WO-013 | Payroll golden master (13 scenarios, offline FX fake) | Found a real payroll defect (below) |
 
-Plus one non-Forge commit: a Dockerfile, a compose `app` service and demo seed data, so the app runs with
-`docker compose up -d --build`.
+Plus two non-Forge additions:
+- A Dockerfile, a compose `app` service and demo seed data, so the app runs with `docker compose up -d --build`.
+- **FleetOS Command Center**, a new interactive UI at `/`. It follows the layout in Forge's UI design spec:
+  sidebar navigation, a KPI card grid and a priority-alerts panel. The old Thymeleaf pages stay at `/classic`. It includes:
+  - a live map with a scrubbable **fleet replay** that animates every truck along its routes
+  - a driver timeline synced to the replay
+  - a jobs table you can search and sort
+  - fleet cards with inspection countdown rings
+  - a payroll explorer in EUR, HUF or USD with a per-driver work calendar
+  - detail drawers where costs can be added or removed (CSRF-protected)
+  - a ⌘K command palette, and dark and light themes
+
+  It reads a new `/api/v2` read API: flat JSON, ISO dates, and **no driver personal data**. The legacy `/api/employees`
+  returned tax, social insurance and driver's card numbers.
+
+Screenshots: `submission/screenshots/before-*.png` and `after-*.png`.
 
 **Numbers**
 
 | | Before | After |
 |---|---|---|
-| Automated tests | 60 (2 failing) | 96 (same 2 legacy failures) |
+| Automated tests | 60 (2 failing) | 102 (same 2 legacy failures) |
 | Committed credentials | yes | none |
 | CSRF | disabled | enforced |
 | Local run | manual MySQL install | one command |
+| UI | 2017 Bootstrap 3 pages | interactive Command Center (classic kept) |
 | Forge work orders done | 0 / 67 | 8 / 67 (in review) |
 
 ## Found along the way

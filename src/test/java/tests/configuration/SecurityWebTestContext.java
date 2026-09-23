@@ -2,6 +2,7 @@ package tests.configuration;
 
 import com.markbudai.openfleet.configuration.WebSecurityConfig;
 import com.markbudai.openfleet.controller.ApiController;
+import com.markbudai.openfleet.controller.CommandCenterApiController;
 import com.markbudai.openfleet.controller.EmployeeController;
 import com.markbudai.openfleet.controller.IndexController;
 import com.markbudai.openfleet.controller.LocationController;
@@ -48,7 +49,7 @@ final class SecurityWebTestContext {
 
     @Configuration
     @EnableWebMvc
-    @Import({WebSecurityConfig.class, ApiController.class, EmployeeController.class, IndexController.class,
+    @Import({WebSecurityConfig.class, ApiController.class, CommandCenterApiController.class, EmployeeController.class, IndexController.class,
             LocationController.class, LoginController.class, TractorController.class, TrailerController.class,
             TransportController.class})
     static class WebConfig {
