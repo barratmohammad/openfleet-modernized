@@ -1,0 +1,50 @@
+# Local and CI test dependencies for OpenFleet.
+# NOT for production: every credential below is a test-only placeholder and
+# can be overridden from the shell or an untracked .env file.
+name: openfleet
+
+services:
+  mysql:
+    # MySQL 5.7 matches the legacy MySQL Connector/J 5.1.x driver.
+    # Only an amd64 image exists, so Apple Silicon runs it under emulation.
+    image: mysql:5.7
+    platform: linux/amd64
+    environment:
+      MYSQL_DATABASE: ${OPENFLEET_DB_NAME:-openfleet}
+      MYSQL_USER: ${OPENFLEET_DB_USER:-openfleet_test}
+      MYSQL_PASSWORD: ${OPENFLEET_DB_PASSWORD:-openfleet_test_only}
+      MYSQL_ROOT_PASSWORD: ${OPENFLEET_DB_ROOT_PASSWORD:-openfleet_root_test_only}
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    ports:
+      - "${OPENFLEET_DB_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  ldap:
+    # Loads the same fixture the embedded LDAP server uses, so there is one
+    # identity source for tests: uid=admin,ou=managers,dc=openfleet,dc=org.
+    image: bitnamilegacy/openldap:2.6
+    environment:
+      LDAP_ROOT: dc=openfleet,dc=org
+      LDAP_ADMIN_USERNAME: ${OPENFLEET_LDAP_ADMIN_USER:-admin}
+      LDAP_ADMIN_PASSWORD: ${OPENFLEET_LDAP_ADMIN_PASSWORD:-ldap_admin_test_only}
+      LDAP_CUSTOM_LDIF_DIR: /ldifs
+      LDAP_PORT_NUMBER: "1389"
+    ports:
+      # 8389 matches the LDAP port used by WebSecurityConfig.contextSource.
+      - "${OPENFLEET_LDAP_PORT:-8389}:1389"
+    volumes:
+      - ./src/main/resources/test-server.ldif:/ldifs/test-server.ldif:ro
+    healthcheck:
+      test: ["CMD-SHELL", "ldapsearch -x -H ldap://127.0.0.1:1389 -b dc=openfleet,dc=org uid=admin | grep -q 'numEntries: 1'"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  mysql-data:
