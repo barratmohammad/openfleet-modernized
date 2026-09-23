@@ -28,6 +28,7 @@
             </div>
             <div class="panel-body">
                 <form class="inline-form" method="post" action="/transport/job/add">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <input th:if="${transport}" name="id" type="hidden" th:value="${transport} ? ${transport.id} : ''"/>
                     <div class="row">
                         <div class="col-md-6">
