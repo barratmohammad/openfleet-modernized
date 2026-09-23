@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +37,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     private EmployeeService employeeService;
     private TransportService transportService;
+    // Supplies the currency converter per payout run. Production keeps the legacy behavior
+    // (a fresh MNB SOAP client per call); tests pass a deterministic fake so no network call happens.
+    private final Supplier<ExchangeService> exchangeServiceSupplier;
 
     /**
      * Constructor for creating {@link com.markbudai.openfleet.services.implementations.PaymentServiceImpl} object.
@@ -44,8 +48,20 @@ public class PaymentServiceImpl implements PaymentService {
      */
     @Autowired
     public PaymentServiceImpl(EmployeeService employeeService, TransportService transportService){
+        this(employeeService, transportService, MNBExchangeService::new);
+    }
+
+    /**
+     * Constructor allowing the exchange-rate source to be supplied, e.g. a deterministic fake in tests.
+     * @param employeeService the {@link com.markbudai.openfleet.services.EmployeeService} used by this service.
+     * @param transportService the {@link com.markbudai.openfleet.services.TransportService} used by this service.
+     * @param exchangeServiceSupplier supplies the {@link com.markbudai.openfleet.services.ExchangeService} used for currency conversion.
+     */
+    public PaymentServiceImpl(EmployeeService employeeService, TransportService transportService,
+                              Supplier<ExchangeService> exchangeServiceSupplier){
         this.employeeService = employeeService;
         this.transportService = transportService;
+        this.exchangeServiceSupplier = exchangeServiceSupplier;
     }
 
     /**
@@ -180,7 +196,7 @@ public class PaymentServiceImpl implements PaymentService {
         for(Employee employee : employees){
             Payout payout = getPayout(employee,year,month);
             if(!payout.getCurrency().equals(currency)){
-                ExchangeService exchangeService = new MNBExchangeService();
+                ExchangeService exchangeService = exchangeServiceSupplier.get();
                 long amount = exchangeService.exchange(payout.getCurrency(), BigDecimal.valueOf(payout.getAmount()),currency).longValue();
                 payout.setCurrency(currency);
                 payout.setAmount(amount);
