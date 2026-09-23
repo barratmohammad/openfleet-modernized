@@ -80,3 +80,9 @@ buildNumber.properties
 # End of https://www.gitignore.io/api/maven,intellij
 /.idea/
 /openfleet.iml
+# Forge
+.forge-commit-ready
+.forge/project-id
+.forge/hook-version
+.forge/changed-files.log
+.claude/hooks/
