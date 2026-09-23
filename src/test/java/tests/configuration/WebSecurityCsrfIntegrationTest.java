@@ -10,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -69,7 +69,7 @@ public class WebSecurityCsrfIntegrationTest {
         EmployeeBuilder builder = context.getBean(EmployeeBuilder.class);
         EmployeeService employeeService = context.getBean(EmployeeService.class);
         Employee newEmployee = new Employee();
-        Mockito.when(builder.buildFromWebRequest(Matchers.any(WebRequest.class))).thenReturn(newEmployee);
+        Mockito.when(builder.buildFromWebRequest(ArgumentMatchers.any(WebRequest.class))).thenReturn(newEmployee);
         Mockito.when(employeeService.getAllEmployees()).thenReturn(Collections.<Employee>emptyList());
 
         MvcResult result = mvc.perform(post("/employee/add").with(user("admin")).with(csrf())
@@ -104,7 +104,7 @@ public class WebSecurityCsrfIntegrationTest {
 
         Assert.assertNotEquals(403, result.getResponse().getStatus());
         Assert.assertEquals("/WEB-INF/test-views/transport/transportDetails.html", result.getResponse().getForwardedUrl());
-        Mockito.verify(transport).addCost(Matchers.any());
+        Mockito.verify(transport).addCost(ArgumentMatchers.any());
         Mockito.verify(transportService).updateTransport(transport);
     }
 }

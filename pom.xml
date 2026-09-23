@@ -48,6 +48,10 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <mainClass>com.markbudai.openfleet.Application</mainClass>
+        <junit-jupiter.version>5.10.2</junit-jupiter.version>
+        <mockito.version>4.11.0</mockito.version>
+        <!-- Overrides the JUnit 4.12 managed by Spring Boot 1.5 for the Vintage bridge -->
+        <junit.version>4.13.2</junit.version>
     </properties>
 
     <!-- Spring boot parent -->
@@ -143,16 +147,30 @@
             <version>1.2.2</version>
             <scope>runtime</scope>
         </dependency>
-        <!-- Mpckito -->
+        <!-- Testing: JUnit Jupiter, with the Vintage engine bridging not-yet-migrated JUnit 4 tests -->
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- mockito-core 4.11 is the last Mockito line supporting Java 8 -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Spring MVC and Spring Security test support (test scope only) -->
@@ -191,6 +209,12 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- Surefire 3.x discovers JUnit Platform (Jupiter + Vintage) tests and runs on Java 8 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
             </plugin>
             <!-- SpringBoot maven plugin for convenience -->
             <plugin>
