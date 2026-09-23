@@ -27,6 +27,7 @@
         </div>
         <div class="panel-body">
             <form name="newEmployeeForm" action="#" th:action="@{/employee/add}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input id="hiddenId" name="id" type="hidden" th:value="${employee} ? ${employee.id} : ''" />
                 <input id="hiddenPlaceOfBirth" name="id" type="hidden" th:value="${employee?.placeOfBirth} ? ${employee.placeOfBirth.id} : ''" />
                 <input id="hiddenPlaceOfLiving" name="id" type="hidden" th:value="${employee?.placeOfLiving} ? ${employee.placeOfLiving.id} : ''" />

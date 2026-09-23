@@ -2,6 +2,8 @@ package tests.configuration;
 
 import com.markbudai.openfleet.framework.builder.EmployeeBuilder;
 import com.markbudai.openfleet.model.Employee;
+import com.markbudai.openfleet.model.Transport;
+import com.markbudai.openfleet.services.TransportService;
 import com.markbudai.openfleet.services.EmployeeService;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -44,7 +46,8 @@ public class WebSecurityCsrfIntegrationTest {
 
     @Before
     public void resetMocks() {
-        Mockito.reset(context.getBean(EmployeeService.class), context.getBean(EmployeeBuilder.class));
+        Mockito.reset(context.getBean(EmployeeService.class), context.getBean(EmployeeBuilder.class),
+                context.getBean(TransportService.class));
     }
 
     @Test
@@ -87,5 +90,21 @@ public class WebSecurityCsrfIntegrationTest {
     public void safeGetRoutesAreUnaffectedByCsrf() throws Exception {
         Mockito.when(context.getBean(EmployeeService.class).getAllEmployees()).thenReturn(Collections.<Employee>emptyList());
         Assert.assertEquals(200, mvc.perform(get("/employee/list").with(user("admin"))).andReturn().getResponse().getStatus());
+    }
+
+    @Test
+    public void transportCostFlowWithValidTokenReachesAddCost() throws Exception {
+        TransportService transportService = context.getBean(TransportService.class);
+        Transport transport = Mockito.mock(Transport.class);
+        Mockito.when(transportService.getTransportById(7L)).thenReturn(transport);
+
+        MvcResult result = mvc.perform(post("/transport/job/addCost").with(user("admin")).with(csrf())
+                .param("transportId", "7").param("amount", "120").param("costDescription", "Diesel")
+                .param("currency", "EUR").param("date", "2026-09-01")).andReturn();
+
+        Assert.assertNotEquals(403, result.getResponse().getStatus());
+        Assert.assertEquals("/WEB-INF/test-views/transport/transportDetails.html", result.getResponse().getForwardedUrl());
+        Mockito.verify(transport).addCost(Matchers.any());
+        Mockito.verify(transportService).updateTransport(transport);
     }
 }
