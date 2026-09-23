@@ -1,6 +1,7 @@
 package tests.configuration;
 
 import com.markbudai.openfleet.controller.ApiController;
+import com.markbudai.openfleet.controller.CommandCenterApiController;
 import com.markbudai.openfleet.controller.EmployeeController;
 import com.markbudai.openfleet.controller.IndexController;
 import com.markbudai.openfleet.controller.LocationController;
@@ -57,7 +58,7 @@ public class WebSecurityRouteInventoryTest {
     /** Every mapping declared in the controller package. Keep in sync; inventoryMatchesControllerMappings enforces it. */
     static final List<Route> INVENTORY = Arrays.asList(
             new Route("GET", "/login", Access.PUBLIC),
-            get_("/"),
+            get_("/"), get_("/classic"),
             // Employees and payroll
             get_("/employee/list"), get_("/employee/new"), post_("/employee/add"), get_("/employee/edit"),
             get_("/employee/delete"), get_("/employee/payment"), get_("/employee/payouts"),
@@ -74,11 +75,14 @@ public class WebSecurityRouteInventoryTest {
             get_("/transports/api"),
             // JSON API
             get_("/api/tractors"), get_("/api/badges"), get_("/api/trailers"), get_("/api/employees"),
-            get_("/api/locations"), get_("/api/employeePerformance")
+            get_("/api/locations"), get_("/api/employeePerformance"),
+            // Command Center read API
+            get_("/api/v2/session"), get_("/api/v2/snapshot"), get_("/api/v2/payouts")
     );
 
     static final List<String> STATIC_ASSETS = Arrays.asList(
-            "/css/style.css", "/js/validators.js", "/fonts/example.woff", "/img/example.png", "/bower_components/example.js");
+            "/css/style.css", "/js/validators.js", "/fonts/example.woff", "/img/example.png", "/bower_components/example.js",
+            "/transport.png", "/favicon.ico");
 
     private static AnnotationConfigWebApplicationContext context;
     private static MockMvc mvc;
@@ -99,13 +103,13 @@ public class WebSecurityRouteInventoryTest {
                 ? post(route.path).with(csrf())
                 : get(route.path);
         // Supplies the id parameters that detail, edit and delete routes require.
-        return builder.param("id", "1").param("transportId", "1");
+        return builder.param("id", "1").param("transportId", "1").param("year", "2026").param("month", "8");
     }
 
     @Test
     public void inventoryMatchesControllerMappings() {
         Set<String> declared = new TreeSet<>();
-        for (Class<?> controller : Arrays.asList(ApiController.class, EmployeeController.class, IndexController.class,
+        for (Class<?> controller : Arrays.asList(ApiController.class, CommandCenterApiController.class, EmployeeController.class, IndexController.class,
                 LocationController.class, LoginController.class, TractorController.class, TrailerController.class,
                 TransportController.class)) {
             RequestMapping classMapping = AnnotatedElementUtils.findMergedAnnotation(controller, RequestMapping.class);
@@ -122,7 +126,7 @@ public class WebSecurityRouteInventoryTest {
         Set<String> inventoried = INVENTORY.stream().map(r -> r.path).collect(Collectors.toCollection(TreeSet::new));
         Assert.assertEquals("Route inventory drifted from controller mappings", declared, inventoried);
         Assert.assertEquals("Each route must appear once", INVENTORY.size(), inventoried.size());
-        Assert.assertEquals(38, INVENTORY.size());
+        Assert.assertEquals(42, INVENTORY.size());
     }
 
     @Test
