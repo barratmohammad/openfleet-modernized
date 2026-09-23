@@ -3,9 +3,9 @@ package tests.services;
 import com.markbudai.openfleet.dao.repositories.TransportRepository;
 import com.markbudai.openfleet.services.TransportService;
 import com.markbudai.openfleet.services.implementations.TransportServiceImpl;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import tests.supplier.EmployeeSupplier;
 import tests.supplier.TransportSupplier;
@@ -18,7 +18,7 @@ public class TransportServiceTest {
     private static TransportService service;
     private static TransportRepository mockedTransportRepository;
 
-    @BeforeClass
+    @BeforeAll
     public static void init(){
         mockedTransportRepository = TransportSupplier.getMockedRepository();
         service = new TransportServiceImpl(mockedTransportRepository);
@@ -26,11 +26,11 @@ public class TransportServiceTest {
 
     @Test
     public void testTransportSize(){
-        Assert.assertEquals(2,service.getAllTransports().size());
+        Assertions.assertEquals(2,service.getAllTransports().size());
     }
 
     @Test
     public void testTransportSizeByEmployee(){
-        Assert.assertEquals(2,service.getTransportByEmployee(EmployeeSupplier.getSampleEmployee()).size());
+        Assertions.assertEquals(2,service.getTransportByEmployee(EmployeeSupplier.getSampleEmployee()).size());
     }
 }

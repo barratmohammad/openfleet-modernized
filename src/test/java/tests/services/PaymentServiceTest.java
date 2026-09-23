@@ -7,9 +7,9 @@ import com.markbudai.openfleet.services.TransportService;
 import com.markbudai.openfleet.model.Employee;
 import com.markbudai.openfleet.model.Transport;
 import com.markbudai.openfleet.services.PaymentService;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import tests.supplier.EmployeeSupplier;
 import tests.supplier.TransportSupplier;
@@ -27,7 +27,7 @@ public class PaymentServiceTest {
 
     private static PaymentService service;
 
-    @BeforeClass
+    @BeforeAll
     public static void init(){
         mockedEmployeeService = EmployeeSupplier.getMockProvider();
         mockedTransportService = TransportSupplier.getMockProvider();
@@ -38,20 +38,20 @@ public class PaymentServiceTest {
     public void testPayoutGeneration(){
         Employee employee = EmployeeSupplier.getSampleEmployee();
         Payout payout = service.getPayout(employee,2017,LocalDate.now().getMonthValue());
-        Assert.assertEquals(500,payout.getAmount());
-        Assert.assertEquals(10,payout.getWorkDays());
+        Assertions.assertEquals(500,payout.getAmount());
+        Assertions.assertEquals(10,payout.getWorkDays());
     }
 
     @Test
     public void testWorkDays(){
         List<Transport> transports = TransportSupplier.getDateList();
-        Assert.assertEquals(32,service.getWorkDays(transports));
+        Assertions.assertEquals(32,service.getWorkDays(transports));
     }
 
     @Test
     public void testWorkDaysAgainst3TransportsOnOneDay(){
         List<Transport> transports = TransportSupplier.getTransportsOnSameDay();
-        Assert.assertEquals(1,service.getWorkDays(transports));
+        Assertions.assertEquals(1,service.getWorkDays(transports));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class PaymentServiceTest {
         Mockito.when(mockedTransportService.getTransportByEmployee(EmployeeSupplier.getSampleEmployee()))
                 .thenReturn(TransportSupplier.getDateList());
         PaymentService service = new PaymentServiceImpl(mockedEmployeeService,mockedTransportService);
-        Assert.assertEquals(0.8,service.getDriversPerformance(2017,1).get(0).getSecond().getFirst(),0.001);
-        Assert.assertEquals(0.2,service.getDriversPerformance(2017,1).get(0).getSecond().getSecond(),0.001);
+        Assertions.assertEquals(0.8,service.getDriversPerformance(2017,1).get(0).getSecond().getFirst(),0.001);
+        Assertions.assertEquals(0.2,service.getDriversPerformance(2017,1).get(0).getSecond().getSecond(),0.001);
     }
 }
