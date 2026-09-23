@@ -1,3 +1,14 @@
+# OpenFleet → FleetOS (modernized with Opsera Forge)
+
+This repository modernizes [devshiro/openfleet-legacy](https://github.com/devshiro/openfleet-legacy)
+(original author Mark Budai, Apache 2.0) in place, driven by Opsera Forge work orders.
+See [submission/before-after.md](submission/before-after.md) for what changed.
+
+**Run it:** `docker compose up -d --build`, then open http://localhost:8081 and log in as `admin` / `password`
+(dev profile with demo data; local use only).
+
+---
+
 # OpenFleet
 Openfleet is a Java web application developed using the Spring framework to help in the management of micro and small
 transportation businesses.
