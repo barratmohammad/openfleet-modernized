@@ -59,8 +59,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // CSRF protection stays at Spring Security's default (enabled): every POST/PUT/DELETE
+        // must carry the session's CSRF token, which Thymeleaf th:action forms emit automatically.
         http
-                .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/css/**","/js/**","/fonts/**","/img/**","/bower_components/**").permitAll()
                     .anyRequest().fullyAuthenticated()
