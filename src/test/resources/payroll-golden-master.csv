@@ -1,0 +1,19 @@
+# Payroll golden master captured from the legacy PaymentServiceImpl (daily fee 50 EUR).
+# Fake exchange rates to HUF: EUR=310, USD=280 (see PaymentServiceTest.fakeExchange).
+# NOTE: "overlapping" 2017-01 bills 28 work days because the first transport starts 2016-12-28;
+# the legacy rules count prior-month days of a transport finishing in the billed month.
+# These values pin CURRENT behavior so refactoring cannot change payroll silently.
+scenario,year,month,currency,expected_work_days,expected_rest_days,expected_amount,expected_payout_rows
+overlapping,2017,1,EUR,28,7,1400,1
+overlapping,2017,1,HUF,28,7,434000,1
+overlapping,2017,1,USD,28,7,1550,1
+overlapping,2017,2,EUR,4,24,200,1
+overlapping,2017,2,USD,4,24,221,1
+overlapping,2017,3,EUR,0,0,0,0
+same-day,2017,1,EUR,1,30,50,1
+same-day,2017,1,HUF,1,30,15500,1
+same-day,2017,2,EUR,0,0,0,0
+past-month,2017,4,EUR,10,20,500,1
+past-month,2017,4,HUF,10,20,155000,1
+past-month,2017,4,USD,10,20,553,1
+past-month,2017,5,EUR,0,0,0,0
