@@ -29,6 +29,23 @@ The embedded LDAP server hase a single user. You can login using:
  * username: admin
  * password: password
 
+### Local test dependencies (Docker Compose)
+`docker-compose.yml` starts a MySQL 5.7 database and an OpenLDAP server for
+local development and CI integration tests **only**. All credentials in it are
+test-only placeholders; override them with `OPENFLEET_*` environment variables.
+The LDAP service loads `src/main/resources/test-server.ldif`, the same fixture
+the embedded LDAP server uses, and listens on port 8389.
+
+```
+docker compose -f docker-compose.yml config
+docker compose -f docker-compose.yml up -d mysql ldap
+docker compose -f docker-compose.yml ps --services
+docker compose -f docker-compose.yml down -v
+```
+
+Use `docker compose -f docker-compose.yml logs mysql` or `logs ldap` when a
+service fails to become healthy.
+
 ### Configurations
 All application configurations are currently stored in the 
 [application.properties](https://github.com/Chrams/openfleet/blob/master/src/main/resources/application.properties) file.
