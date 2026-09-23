@@ -46,5 +46,20 @@ services:
       timeout: 5s
       retries: 30
 
+  app:
+    # Local demo runtime for the application itself, using the dev profile
+    # (embedded LDAP + demo seed data). Not a production deployment.
+    build: .
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      OPENFLEET_DATASOURCE_URL: jdbc:mysql://mysql:3306/${OPENFLEET_DB_NAME:-openfleet}?useSSL=false
+      OPENFLEET_DATASOURCE_USERNAME: ${OPENFLEET_DB_USER:-openfleet_test}
+      OPENFLEET_DATASOURCE_PASSWORD: ${OPENFLEET_DB_PASSWORD:-openfleet_test_only}
+    ports:
+      - "${OPENFLEET_APP_PORT:-8081}:8080"
+
 volumes:
   mysql-data:
